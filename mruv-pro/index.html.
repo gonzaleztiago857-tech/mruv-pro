@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MRUV PRO ONLINE</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Firebase -->
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="app.js"></script>
+</head>
+<body>
+
+    <header>
+        <h1>🚗 MRUV PRO ONLINE</h1>
+        <p>Movimiento Rectilíneo Uniformemente Variado</p>
+    </header>
+
+    <!-- LOGIN JUGADOR -->
+    <section id="loginSection" class="card">
+        <h2>👤 Ingresar al juego</h2>
+
+        <input
+            type="text"
+            id="playerName"
+            placeholder="Escribí tu nombre"
+            maxlength="30"
+        >
+
+        <button id="startBtn" class="btn">
+            JUGAR
+        </button>
+    </section>
+
+    <!-- PANEL ORGANIZADOR -->
+    <section id="adminSection" class="card hidden">
+
+        <h2>🔧 Panel del Organizador</h2>
+
+        <div class="admin-top">
+            <button id="newExerciseBtn" class="btn">
+                ➕ Nuevo ejercicio
+            </button>
+
+            <button id="saveExercisesBtn" class="btn success">
+                💾 Guardar cambios
+            </button>
+        </div>
+
+        <div id="exerciseEditor"></div>
+
+    </section>
+
+    <!-- BOTÓN ADMIN -->
+    <div class="adminButtonContainer">
+        <button id="adminBtn" class="adminBtn">
+            🔒 Modo Organizador
+        </button>
+    </div>
+
+    <!-- JUEGO -->
+    <section id="gameSection" class="hidden">
+
+        <div class="playerInfo">
+            <h2 id="welcomePlayer"></h2>
+        </div>
+
+        <div id="exerciseContainer"></div>
+
+        <div class="finishBox">
+            <button id="finishBtn" class="btn success">
+                🏆 Finalizar
+            </button>
+        </div>
+
+    </section>
+
+    <!-- RESULTADO -->
+    <section id="resultSection" class="card hidden">
+
+        <h2>🏆 Resultado</h2>
+
+        <h3 id="finalScore"></h3>
+
+        <div id="medalBox"></div>
+
+    </section>
+
+    <!-- RANKING -->
+    <section class="card">
+
+        <h2>📊 Ranking Online</h2>
+
+        <div id="rankingContainer">
+
+            <div class="loading">
+                Cargando ranking...
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- PLANTILLA DE EJERCICIO -->
+    <template id="exerciseTemplate">
+
+        <div class="exerciseCard">
+
+            <h3 class="exerciseTitle"></h3>
+
+            <img
+                class="exerciseImage hidden"
+                alt="Referencia visual"
+            >
+
+            <p class="exerciseText"></p>
+
+            <input
+                type="number"
+                class="exerciseAnswer"
+                placeholder="Tu respuesta"
+            >
+
+            <button class="btn answerBtn">
+                Responder
+            </button>
+
+            <div class="exerciseFeedback"></div>
+
+        </div>
+
+    </template>
+
+    <!-- MODAL CONTRASEÑA -->
+    <div id="passwordModal" class="modal hidden">
+
+        <div class="modalContent">
+
+            <h2>🔒 Organizador</h2>
+
+            <input
+                type="password"
+                id="adminPassword"
+                placeholder="Contraseña"
+            >
+
+            <button id="loginAdminBtn" class="btn">
+                Ingresar
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- MODAL NUEVO EJERCICIO -->
+    <div id="newExerciseModal" class="modal hidden">
+
+        <div class="modalContent">
+
+            <h2>➕ Nuevo ejercicio</h2>
+
+            <input
+                type="text"
+                id="newStatement"
+                placeholder="Enunciado"
+            >
+
+            <input
+                type="number"
+                id="newAnswer"
+                placeholder="Respuesta correcta"
+            >
+
+            <label>
+                <input type="checkbox" id="newWithImage">
+                Mostrar imagen de referencia
+            </label>
+
+            <button id="createExerciseBtn" class="btn success">
+                Crear ejercicio
+            </button>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
