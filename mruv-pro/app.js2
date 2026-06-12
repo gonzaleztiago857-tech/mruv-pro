@@ -1,0 +1,315 @@
+// =====================
+// RENDER EJERCICIOS
+// =====================
+
+function renderExercises() {
+
+    const container =
+        document.getElementById("exerciseContainer");
+
+    container.innerHTML = "";
+
+    exercises.forEach((exercise,index)=>{
+
+        const template =
+            document.getElementById("exerciseTemplate");
+
+        const clone =
+            template.content.cloneNode(true);
+
+        clone.querySelector(".exerciseTitle")
+            .textContent =
+            "Ejercicio " + (index + 1);
+
+        clone.querySelector(".exerciseText")
+            .textContent =
+            exercise.statement;
+
+        const img =
+            clone.querySelector(".exerciseImage");
+
+        if(exercise.image){
+
+            img.classList.remove("hidden");
+
+            // Cambiar por tu imagen después
+            img.src =
+            "img/auto.jpg";
+
+        }
+
+        const btn =
+            clone.querySelector(".answerBtn");
+
+        const input =
+            clone.querySelector(".exerciseAnswer");
+
+        const feedback =
+            clone.querySelector(".exerciseFeedback");
+
+        btn.addEventListener("click",()=>{
+
+            const value =
+                Number(input.value);
+
+            if(
+                Math.abs(
+                    value - Number(exercise.answer)
+                ) <= 0.1
+            ){
+
+                feedback.innerHTML =
+                    "✅ Correcto";
+
+                feedback.style.color =
+                    "#4ade80";
+
+                if(!feedback.dataset.ok){
+
+                    score++;
+
+                    feedback.dataset.ok =
+                        "1";
+
+                }
+
+            }else{
+
+                feedback.innerHTML =
+                    "❌ Incorrecto";
+
+                feedback.style.color =
+                    "#f87171";
+
+            }
+
+        });
+
+        container.appendChild(clone);
+
+    });
+
+}
+
+// =====================
+// FINALIZAR
+// =====================
+
+const finishBtn =
+    document.getElementById("finishBtn");
+
+finishBtn.addEventListener("click",async()=>{
+
+    gameSection.classList.add("hidden");
+
+    resultSection.classList.remove("hidden");
+
+    document.getElementById("finalScore")
+        .textContent =
+        score + " / " + exercises.length;
+
+    const medal =
+        document.getElementById("medalBox");
+
+    if(score === exercises.length){
+
+        medal.innerHTML = "🥇";
+
+    }else if(
+        score >= Math.ceil(exercises.length*0.6)
+    ){
+
+        medal.innerHTML = "🥈";
+
+    }else{
+
+        medal.innerHTML = "🥉";
+
+    }
+
+    await saveScore(score);
+
+});
+
+// =====================
+// NUEVO EJERCICIO
+// =====================
+
+const newExerciseBtn =
+    document.getElementById("newExerciseBtn");
+
+const newExerciseModal =
+    document.getElementById("newExerciseModal");
+
+const createExerciseBtn =
+    document.getElementById("createExerciseBtn");
+
+newExerciseBtn.addEventListener("click",()=>{
+
+    newExerciseModal.classList.remove("hidden");
+
+});
+
+createExerciseBtn.addEventListener("click",()=>{
+
+    const statement =
+        document.getElementById("newStatement")
+            .value
+            .trim();
+
+    const answer =
+        Number(
+            document.getElementById("newAnswer")
+                .value
+        );
+
+    const image =
+        document.getElementById("newWithImage")
+            .checked;
+
+    if(statement === ""){
+
+        alert("Escribí un enunciado");
+
+        return;
+
+    }
+
+    exercises.push({
+        statement,
+        answer,
+        image
+    });
+
+    newExerciseModal.classList.add("hidden");
+
+    loadAdminPanel();
+
+});
+
+// =====================
+// GUARDAR CAMBIOS
+// =====================
+
+const saveExercisesBtn =
+    document.getElementById("saveExercisesBtn");
+
+saveExercisesBtn.addEventListener("click",
+async()=>{
+
+    const statements =
+        document.querySelectorAll(
+            ".adminStatement"
+        );
+
+    const answers =
+        document.querySelectorAll(
+            ".adminAnswer"
+        );
+
+    const images =
+        document.querySelectorAll(
+            ".adminImage"
+        );
+
+    const updated = [];
+
+    for(
+        let i = 0;
+        i < statements.length;
+        i++
+    ){
+
+        updated.push({
+
+            statement:
+                statements[i].value,
+
+            answer:
+                Number(
+                    answers[i].value
+                ),
+
+            image:
+                images[i].checked
+
+        });
+
+    }
+
+    exercises = updated;
+
+    await set(
+        ref(db,"exercises"),
+        updated
+    );
+
+    alert(
+        "Cambios guardados para todos los jugadores."
+    );
+
+});
+
+// =====================
+// EJERCICIOS INICIALES
+// =====================
+
+async function createDefaultExercises(){
+
+    const defaultExercises = [
+
+        {
+            statement:
+            "Observa la imagen. Un automóvil se desplaza a 60 m/s y se detiene completamente en 6 s. ¿Cuál fue su aceleración?",
+            answer:-10,
+            image:true
+        },
+
+        {
+            statement:
+            "Observa la imagen. Un automóvil pasa de 40 m/s a 20 m/s en 5 s. Calcula la aceleración.",
+            answer:-4,
+            image:true
+        },
+
+        {
+            statement:
+            "Dos autos parten del mismo punto. Auto A: 15 m/s. Auto B: 5 m/s con aceleración 2 m/s². ¿A qué tiempo se encuentran?",
+            answer:5,
+            image:false
+        },
+
+        {
+            statement:
+            "Un auto parte del reposo con aceleración de 4 m/s². ¿Qué velocidad tendrá a los 8 s?",
+            answer:32,
+            image:false
+        },
+
+        {
+            statement:
+            "Observa la imagen. Un automóvil viaja a 80 m/s y se detiene en 8 s. ¿Cuál es la aceleración?",
+            answer:-10,
+            image:true
+        }
+
+    ];
+
+    const exerciseRef =
+        ref(db,"exercises");
+
+    const snap =
+        await get(exerciseRef);
+
+    if(!snap.exists()){
+
+        await set(
+            exerciseRef,
+            defaultExercises
+        );
+
+    }
+
+}
+
+createDefaultExercises();
